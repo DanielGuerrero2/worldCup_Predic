@@ -46,12 +46,12 @@ export default function App() {
   const [simHistory, setSimHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
-  
+
   // States para compartir la selección de H2H
   const [h2hTeamA, setH2hTeamA] = useState<string>('MEX');
   const [h2hTeamB, setH2hTeamB] = useState<string>('USA');
   const [h2hModel, setH2hModel] = useState<string>('dixon_coles');
-  
+
   // States para modal de actualización de marcador
   const [scoreA, setScoreA] = useState<number>(0);
   const [scoreB, setScoreB] = useState<number>(0);
@@ -64,13 +64,13 @@ export default function App() {
       const matchesData = await fetchMatches();
       setTeams(teamsData);
       setMatches(matchesData);
-      
+
       // Intentar cargar estadísticas de simulación
       const statsData = await fetchSimulationStats();
       if (statsData) {
         setStats(statsData as SimStat[]);
       }
-      
+
       // Cargar historial de simulación
       const historyData = await fetchSimulationHistory();
       if (historyData) {
@@ -103,7 +103,7 @@ export default function App() {
         team_b_score: scoreB,
         status: 'completed'
       });
-      
+
       // Actualizar matches locales
       setMatches(prev => prev.map(m => m.id === selectedMatch.id ? {
         ...m,
@@ -111,7 +111,7 @@ export default function App() {
         team_b_score: scoreB,
         status: 'completed'
       } : m));
-      
+
       setSelectedMatch(null);
     } catch (e) {
       console.error(e);
@@ -129,7 +129,7 @@ export default function App() {
         team_b_score: null as any,
         status: 'scheduled'
       });
-      
+
       setMatches(prev => prev.map(m => m.id === matchId ? {
         ...m,
         team_a_score: null,
@@ -146,12 +146,12 @@ export default function App() {
     if (!window.confirm('¿Estás seguro de que quieres borrar todas tus predicciones personalizadas? Los resultados oficiales de la Jornada 1 se mantendrán.')) {
       return;
     }
-    
+
     const officialMatchIds = [1, 2, 7, 19];
     const userPredictedMatches = matches.filter(
       (m) => m.status === 'completed' && !officialMatchIds.includes(m.id)
     );
-    
+
     try {
       await Promise.all(
         userPredictedMatches.map((m) =>
@@ -163,7 +163,7 @@ export default function App() {
           })
         )
       );
-      
+
       setMatches(prev => prev.map(m => {
         if (m.status === 'completed' && !officialMatchIds.includes(m.id)) {
           return {
@@ -189,7 +189,7 @@ export default function App() {
         team_b_score: scoreB,
         status: 'completed'
       });
-      
+
       setMatches(prev => prev.map(m => m.id === matchId ? {
         ...m,
         team_a_score: scoreA,
@@ -236,55 +236,50 @@ export default function App() {
         <nav className="flex gap-1.5 bg-darkCard/50 border border-white/5 p-1 rounded-xl backdrop-blur-md">
           <button
             onClick={() => setActiveTab('DASHBOARD')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
-              activeTab === 'DASHBOARD'
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${activeTab === 'DASHBOARD'
                 ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/35 text-glow-blue'
                 : 'text-gray-400 hover:text-white'
-            }`}
+              }`}
           >
             <LayoutDashboard className="w-4 h-4" />
             Dashboard
           </button>
           <button
             onClick={() => setActiveTab('GROUPS')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
-              activeTab === 'GROUPS'
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${activeTab === 'GROUPS'
                 ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/35 text-glow-blue'
                 : 'text-gray-400 hover:text-white'
-            }`}
+              }`}
           >
             <Calendar className="w-4 h-4" />
             Grupos
           </button>
           <button
             onClick={() => setActiveTab('BRACKET')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
-              activeTab === 'BRACKET'
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${activeTab === 'BRACKET'
                 ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/35 text-glow-blue'
                 : 'text-gray-400 hover:text-white'
-            }`}
+              }`}
           >
             <Trophy className="w-4 h-4" />
             Bracket (Eliminatorias)
           </button>
           <button
             onClick={() => setActiveTab('MATCH_CENTER')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
-              activeTab === 'MATCH_CENTER'
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${activeTab === 'MATCH_CENTER'
                 ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/35 text-glow-blue'
                 : 'text-gray-400 hover:text-white'
-            }`}
+              }`}
           >
             <Target className="w-4 h-4" />
             Simulador H2H
           </button>
           <button
             onClick={() => setActiveTab('PREDICTIONS')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
-              activeTab === 'PREDICTIONS'
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${activeTab === 'PREDICTIONS'
                 ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/35 text-glow-blue'
                 : 'text-gray-400 hover:text-white'
-            }`}
+              }`}
           >
             <History className="w-4 h-4" />
             Mis Predicciones
@@ -402,7 +397,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="text-center py-6 border-t border-white/5 text-3xs font-mono text-gray-600 flex flex-col sm:flex-row justify-between items-center gap-2">
-        <span>© 2026 FIFA World Cup Match Simulator. Desarrollado con React, FastAPI y SQLite.</span>
+        <span>© 2026 FIFA World Cup Match Simulator. Desarrollado con  React, FastAPI y SQLite.</span>
         <span>Ajuste Dixon-Coles habilitado | Monte Carlo N=10K</span>
       </footer>
     </div>
