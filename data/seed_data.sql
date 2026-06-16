@@ -100,15 +100,15 @@ INSERT OR IGNORE INTO matches (id, team_a_id, team_b_id, stage, group_letter, te
 
 -- Grupo B
 (7, 'CAN', 'BIH', 'group', 'B', 1, 1, 'completed'),
-(8, 'QAT', 'SUI', 'group', 'B', NULL, NULL, 'scheduled'),
+(8, 'QAT', 'SUI', 'group', 'B', 1, 1, 'completed'),
 (9, 'CAN', 'QAT', 'group', 'B', NULL, NULL, 'scheduled'),
 (10, 'BIH', 'SUI', 'group', 'B', NULL, NULL, 'scheduled'),
 (11, 'SUI', 'CAN', 'group', 'B', NULL, NULL, 'scheduled'),
 (12, 'QAT', 'BIH', 'group', 'B', NULL, NULL, 'scheduled'),
 
 -- Grupo C
-(13, 'BRA', 'MAR', 'group', 'C', NULL, NULL, 'scheduled'),
-(14, 'HAI', 'SCO', 'group', 'C', NULL, NULL, 'scheduled'),
+(13, 'BRA', 'MAR', 'group', 'C', 1, 1, 'completed'),
+(14, 'HAI', 'SCO', 'group', 'C', 0, 1, 'completed'),
 (15, 'BRA', 'HAI', 'group', 'C', NULL, NULL, 'scheduled'),
 (16, 'MAR', 'SCO', 'group', 'C', NULL, NULL, 'scheduled'),
 (17, 'SCO', 'BRA', 'group', 'C', NULL, NULL, 'scheduled'),
@@ -116,39 +116,39 @@ INSERT OR IGNORE INTO matches (id, team_a_id, team_b_id, stage, group_letter, te
 
 -- Grupo D
 (19, 'USA', 'PAR', 'group', 'D', 4, 1, 'completed'),
-(20, 'AUS', 'TUR', 'group', 'D', NULL, NULL, 'scheduled'),
+(20, 'AUS', 'TUR', 'group', 'D', 2, 0, 'completed'),
 (21, 'USA', 'AUS', 'group', 'D', NULL, NULL, 'scheduled'),
 (22, 'PAR', 'TUR', 'group', 'D', NULL, NULL, 'scheduled'),
 (23, 'TUR', 'USA', 'group', 'D', NULL, NULL, 'scheduled'),
 (24, 'AUS', 'PAR', 'group', 'D', NULL, NULL, 'scheduled'),
 
 -- Grupo E
-(25, 'GER', 'CUW', 'group', 'E', NULL, NULL, 'scheduled'),
-(26, 'CIV', 'ECU', 'group', 'E', NULL, NULL, 'scheduled'),
+(25, 'GER', 'CUW', 'group', 'E', 7, 1, 'completed'),
+(26, 'CIV', 'ECU', 'group', 'E', 1, 0, 'completed'),
 (27, 'GER', 'CIV', 'group', 'E', NULL, NULL, 'scheduled'),
 (28, 'CUW', 'ECU', 'group', 'E', NULL, NULL, 'scheduled'),
 (29, 'ECU', 'GER', 'group', 'E', NULL, NULL, 'scheduled'),
 (30, 'CIV', 'CUW', 'group', 'E', NULL, NULL, 'scheduled'),
 
 -- Grupo F
-(31, 'NED', 'JPN', 'group', 'F', NULL, NULL, 'scheduled'),
-(32, 'SWE', 'TUN', 'group', 'F', NULL, NULL, 'scheduled'),
+(31, 'NED', 'JPN', 'group', 'F', 2, 2, 'completed'),
+(32, 'SWE', 'TUN', 'group', 'F', 5, 1, 'completed'),
 (33, 'NED', 'SWE', 'group', 'F', NULL, NULL, 'scheduled'),
 (34, 'JPN', 'TUN', 'group', 'F', NULL, NULL, 'scheduled'),
 (35, 'TUN', 'NED', 'group', 'F', NULL, NULL, 'scheduled'),
 (36, 'SWE', 'JPN', 'group', 'F', NULL, NULL, 'scheduled'),
 
 -- Grupo G
-(37, 'BEL', 'EGY', 'group', 'G', NULL, NULL, 'scheduled'),
-(38, 'IRN', 'NZL', 'group', 'G', NULL, NULL, 'scheduled'),
+(37, 'BEL', 'EGY', 'group', 'G', 1, 1, 'completed'),
+(38, 'IRN', 'NZL', 'group', 'G', 2, 2, 'completed'),
 (39, 'BEL', 'IRN', 'group', 'G', NULL, NULL, 'scheduled'),
 (40, 'EGY', 'NZL', 'group', 'G', NULL, NULL, 'scheduled'),
 (41, 'NZL', 'BEL', 'group', 'G', NULL, NULL, 'scheduled'),
 (42, 'IRN', 'EGY', 'group', 'G', NULL, NULL, 'scheduled'),
 
 -- Grupo H
-(43, 'ESP', 'CPV', 'group', 'H', NULL, NULL, 'scheduled'),
-(44, 'KSA', 'URU', 'group', 'H', NULL, NULL, 'scheduled'),
+(43, 'ESP', 'CPV', 'group', 'H', 0, 0, 'completed'),
+(44, 'KSA', 'URU', 'group', 'H', 1, 1, 'completed'),
 (45, 'ESP', 'KSA', 'group', 'H', NULL, NULL, 'scheduled'),
 (46, 'CPV', 'URU', 'group', 'H', NULL, NULL, 'scheduled'),
 (47, 'URU', 'ESP', 'group', 'H', NULL, NULL, 'scheduled'),
