@@ -6,6 +6,11 @@ export default {
   ],
   theme: {
     extend: {
+      fontSize: {
+        '2xs': '0.6875rem', // 11px
+        '3xs': '0.625rem',  // 10px
+        '4xs': '0.5625rem', // 9px
+      },
       colors: {
         darkBg: '#090a0f',
         darkCard: '#131520',

@@ -66,43 +66,83 @@ export default function Bracket({ teams, matches, onSelectMatch }: BracketProps)
     };
   };
 
-  const renderMatchCard = (m: Match, label: string) => {
+  const renderMatchCard = (
+    m: Match,
+    label: string,
+    variant: 'default' | 'semifinal' | 'final' | 'third_place' = 'default'
+  ) => {
     const info = formatMatch(m, label);
+    
+    // Configuración de estilos según variante
+    let cardClasses = "glass-panel hover:bg-darkCard/80 transition-all cursor-pointer select-none relative overflow-hidden";
+    let teamNameClasses = "text-xs font-semibold truncate max-w-[140px]";
+    let scoreClasses = "font-mono font-bold text-xs bg-darkBg px-2 py-0.5 rounded text-white border border-white/5";
+    
+    if (variant === 'default') {
+      cardClasses += " hover:border-brandBlue/40 p-3 rounded-xl space-y-2";
+      teamNameClasses += " text-gray-300";
+    } else if (variant === 'semifinal') {
+      cardClasses += " border-brandBlue/20 hover:border-brandBlue/50 hover:bg-darkCard/95 p-4 rounded-xl space-y-2.5 shadow-lg shadow-brandBlue/5";
+      teamNameClasses += " text-gray-200";
+      scoreClasses = "font-mono font-bold text-xs bg-brandBlue/10 text-brandBlue px-2.5 py-0.5 rounded border border-brandBlue/20";
+    } else if (variant === 'third_place') {
+      cardClasses += " border-brandNeon/20 hover:border-brandNeon/50 hover:bg-darkCard/95 p-4 rounded-xl space-y-2.5 shadow-lg shadow-brandNeon/5";
+      teamNameClasses += " text-gray-200";
+      scoreClasses = "font-mono font-bold text-xs bg-brandNeon/10 text-brandNeon px-2.5 py-0.5 rounded border border-brandNeon/20";
+    } else if (variant === 'final') {
+      cardClasses += " border-brandGold/30 bg-gradient-to-br from-darkCard via-darkCard to-brandGold/5 hover:border-brandGold/65 hover:bg-darkCard/95 p-5 rounded-2xl space-y-3.5 shadow-xl shadow-brandGold/5 pulse-glow";
+      teamNameClasses = "text-sm font-bold truncate max-w-[160px] text-gray-100";
+      scoreClasses = "font-mono font-bold text-sm bg-black/40 px-3.5 py-1 rounded text-white border border-white/10";
+    }
+
+    const isWinnerA = info.completed && info.scoreA! > info.scoreB!;
+    const isWinnerB = info.completed && info.scoreB! > info.scoreA!;
+
+    const placeholderScore = (
+      <span className="font-mono text-3xs text-gray-600 bg-white/5 px-2 py-0.5 rounded border border-white/5 min-w-[20px] text-center">
+        -
+      </span>
+    );
+
     return (
       <div
         key={m.id}
         onClick={() => onSelectMatch(m)}
         id={`bracket-match-${m.id}`}
-        className="glass-panel hover:border-brandBlue/40 hover:bg-darkCard/80 transition-all p-3 rounded-xl cursor-pointer select-none space-y-2 relative overflow-hidden"
+        className={cardClasses}
       >
-        <div className="flex justify-between items-center text-3xs font-mono text-gray-500 border-b border-white/5 pb-1">
+        <div className="flex justify-between items-center text-3xs font-mono text-gray-500 border-b border-white/5 pb-1.5">
           <span>PARTIDO #{m.id}</span>
-          <span className="text-brandNeon font-semibold uppercase">{label}</span>
+          <span className={`${variant === 'final' ? 'text-brandGold font-extrabold text-glow-gold' : variant === 'third_place' ? 'text-brandNeon font-extrabold text-glow-neon' : 'text-brandNeon font-semibold'} uppercase`}>{label}</span>
         </div>
         
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {/* Team A */}
           <div className="flex justify-between items-center">
-            <span className={`text-xs font-semibold truncate max-w-[120px] ${info.completed && info.scoreA! > info.scoreB! ? 'text-brandGold font-bold text-glow-gold' : 'text-gray-300'}`}>
-              {info.teamA}
+            <span className={`${teamNameClasses} ${isWinnerA ? 'text-brandGold font-bold text-glow-gold' : ''} flex items-center gap-1.5`}>
+              {variant === 'final' && isWinnerA && <Trophy className="w-3.5 h-3.5 text-brandGold fill-brandGold/20 flex-shrink-0 animate-pulse" />}
+              {variant === 'third_place' && isWinnerA && <Award className="w-3.5 h-3.5 text-brandNeon fill-brandNeon/20 flex-shrink-0" />}
+              <span className="truncate">{info.teamA}</span>
             </span>
-            {info.completed && (
-              <span className="font-mono font-bold text-xs bg-darkBg px-2 py-0.5 rounded text-white border border-white/5">
+            {info.completed ? (
+              <span className={scoreClasses}>
                 {info.scoreA}
               </span>
-            )}
+            ) : placeholderScore}
           </div>
           
           {/* Team B */}
           <div className="flex justify-between items-center">
-            <span className={`text-xs font-semibold truncate max-w-[120px] ${info.completed && info.scoreB! > info.scoreA! ? 'text-brandGold font-bold text-glow-gold' : 'text-gray-300'}`}>
-              {info.teamB}
+            <span className={`${teamNameClasses} ${isWinnerB ? 'text-brandGold font-bold text-glow-gold' : ''} flex items-center gap-1.5`}>
+              {variant === 'final' && isWinnerB && <Trophy className="w-3.5 h-3.5 text-brandGold fill-brandGold/20 flex-shrink-0 animate-pulse" />}
+              {variant === 'third_place' && isWinnerB && <Award className="w-3.5 h-3.5 text-brandNeon fill-brandNeon/20 flex-shrink-0" />}
+              <span className="truncate">{info.teamB}</span>
             </span>
-            {info.completed && (
-              <span className="font-mono font-bold text-xs bg-darkBg px-2 py-0.5 rounded text-white border border-white/5">
+            {info.completed ? (
+              <span className={scoreClasses}>
                 {info.scoreB}
               </span>
-            )}
+            ) : placeholderScore}
           </div>
         </div>
       </div>
@@ -116,44 +156,40 @@ export default function Bracket({ teams, matches, onSelectMatch }: BracketProps)
         <button
           onClick={() => setActiveTab('R32')}
           id="tab-bracket-r32"
-          className={`flex-1 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
-            activeTab === 'R32'
-              ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/30 text-glow-blue'
-              : 'text-gray-400 hover:text-white'
-          }`}
+          className={`flex-1 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${activeTab === 'R32'
+            ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/30 text-glow-blue'
+            : 'text-gray-400 hover:text-white'
+            }`}
         >
           16avos (R32)
         </button>
         <button
           onClick={() => setActiveTab('R16')}
           id="tab-bracket-r16"
-          className={`flex-1 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
-            activeTab === 'R16'
-              ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/30 text-glow-blue'
-              : 'text-gray-400 hover:text-white'
-          }`}
+          className={`flex-1 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${activeTab === 'R16'
+            ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/30 text-glow-blue'
+            : 'text-gray-400 hover:text-white'
+            }`}
         >
           Octavos (R16)
         </button>
         <button
           onClick={() => setActiveTab('QF')}
           id="tab-bracket-qf"
-          className={`flex-1 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
-            activeTab === 'QF'
-              ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/30 text-glow-blue'
-              : 'text-gray-400 hover:text-white'
-          }`}
+          className={`flex-1 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${activeTab === 'QF'
+            ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/30 text-glow-blue'
+            : 'text-gray-400 hover:text-white'
+            }`}
         >
           Cuartos (QF)
         </button>
         <button
           onClick={() => setActiveTab('FINAL')}
           id="tab-bracket-final"
-          className={`flex-1 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${
-            activeTab === 'FINAL'
-              ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/30 text-glow-blue'
-              : 'text-gray-400 hover:text-white'
-          }`}
+          className={`flex-1 py-2 rounded-lg font-semibold text-xs transition-all duration-200 ${activeTab === 'FINAL'
+            ? 'bg-brandBlue text-white shadow-lg shadow-brandBlue/30 text-glow-blue'
+            : 'text-gray-400 hover:text-white'
+            }`}
         >
           Fase Final
         </button>
@@ -198,42 +234,58 @@ export default function Bracket({ teams, matches, onSelectMatch }: BracketProps)
         )}
 
         {activeTab === 'FINAL' && (
-          <div className="space-y-8 max-w-2xl mx-auto animate-fadeIn">
-            {/* Semifinales */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {sfMatches.map((m, idx) => (
-                <div key={m.id} className="relative">
-                  <div className="absolute -top-3 left-4 bg-brandBlue px-2 py-0.5 rounded text-4xs font-mono font-bold text-white uppercase">
-                    Semifinal {idx + 1}
+          <div className="space-y-6 max-w-3xl mx-auto animate-fadeIn py-2">
+            {/* Sección: Semifinales */}
+            <div className="space-y-3">
+              <h3 className="text-3xs font-mono font-bold text-gray-400 uppercase tracking-widest text-left border-l-2 border-brandBlue pl-2.5 ml-1 select-none">
+                Semifinales
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {sfMatches.map((m, idx) => (
+                  <div key={m.id} className="relative group">
+                    {/* Badge flotante */}
+                    <div className="absolute -top-4 left-4 z-10 bg-brandBlue text-white font-mono font-extrabold text-[11px] uppercase px-3 py-1 rounded-full shadow-md shadow-brandBlue/35 border border-white/10 tracking-wider">
+                      Semifinal {idx + 1}
+                    </div>
+                    {renderMatchCard(m, `Semifinal`, 'semifinal')}
                   </div>
-                  {renderMatchCard(m, `Semifinal`)}
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
-            {/* Gran Final & Tercer Lugar */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-white/5 pt-6">
-              {/* Tercer Lugar */}
-              {thirdPlaceMatch && (
-                <div className="relative">
-                  <div className="absolute -top-3 left-4 bg-brandNeon/80 px-2 py-0.5 rounded text-4xs font-mono font-bold text-white uppercase flex items-center gap-1">
-                    <Award className="w-3 h-3" />
-                    3er Lugar
-                  </div>
-                  {renderMatchCard(thirdPlaceMatch, '3er Puesto')}
-                </div>
-              )}
+            {/* Conectores visuales */}
+            <div className="hidden sm:flex justify-around items-center h-4 relative">
+              <div className="w-1/2 border-r border-dashed border-white/10 h-full"></div>
+              <div className="w-1/2 border-l border-dashed border-white/10 h-full"></div>
+            </div>
 
-              {/* Gran Final */}
-              {finalMatch && (
-                <div className="relative border border-brandGold/30 bg-brandGold/5 rounded-2xl p-1 pulse-glow">
-                  <div className="absolute -top-3 left-4 bg-brandGold px-2.5 py-0.5 rounded text-4xs font-mono font-bold text-darkBg uppercase flex items-center gap-1 font-extrabold text-glow-gold">
-                    <Trophy className="w-3 h-3" />
-                    Gran Final
+            {/* Sección: Finales (Gran Final y 3er Puesto) */}
+            <div className="space-y-3">
+              <h3 className="text-3xs font-mono font-bold text-gray-400 uppercase tracking-widest text-left border-l-2 border-brandNeon pl-2.5 ml-1 select-none">
+                Finales
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {thirdPlaceMatch && (
+                  <div className="relative">
+                    <div className="absolute -top-4 left-4 z-10 bg-brandNeon/90 text-white font-mono font-extrabold text-[11px] uppercase px-3 py-1 rounded-full shadow-md shadow-brandNeon/35 border border-white/10 tracking-wider flex items-center gap-1">
+                      <Award className="w-3.5 h-3.5" />
+                      Tercer Lugar
+                    </div>
+                    {renderMatchCard(thirdPlaceMatch, '3er Puesto', 'third_place')}
                   </div>
-                  {renderMatchCard(finalMatch, 'Campeonato')}
-                </div>
-              )}
+                )}
+
+                {/* Gran Final */}
+                {finalMatch && (
+                  <div className="relative">
+                    <div className="absolute -top-4 left-4 z-10 bg-brandGold text-darkBg font-mono font-extrabold text-xs uppercase px-3.5 py-1 rounded-full shadow-lg shadow-brandGold/35 border border-brandGold/40 tracking-widest flex items-center gap-1.5">
+                      <Trophy className="w-3.5 h-3.5 fill-darkBg" />
+                      Gran Final
+                    </div>
+                    {renderMatchCard(finalMatch, 'Campeonato', 'final')}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
