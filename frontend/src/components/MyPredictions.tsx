@@ -42,6 +42,7 @@ export default function MyPredictions({
   onLoadH2H
 }: MyPredictionsProps) {
   const [subTab, setSubTab] = useState<'USER' | 'MODEL' | 'H2H_HISTORY'>('USER');
+  const [selectedDay, setSelectedDay] = useState<string>('ALL');
   const [modelType, setModelType] = useState<string>('dixon_coles');
 
   const [savedPredictions, setSavedPredictions] = useState<any[]>(() => {
@@ -70,8 +71,17 @@ export default function MyPredictions({
     localStorage.setItem('wc2026_h2h_history', JSON.stringify(updated));
   };
 
-  // Las 4 IDs de los primeros partidos reales
-  const officialMatchIds = [1, 2, 7, 19];
+  // Mapa de partidos oficiales por día
+  const matchDayMap: Record<string, { label: string; date: string; matchIds: number[] }> = {
+    'D1': { label: 'Día 1', date: '11 Jun', matchIds: [1, 2] },
+    'D2': { label: 'Día 2', date: '12 Jun', matchIds: [7, 8, 13, 14] },
+    'D3': { label: 'Día 3', date: '13 Jun', matchIds: [19, 20] },
+    'D4': { label: 'Día 4', date: '14 Jun', matchIds: [25, 26, 31, 32] },
+    'D5': { label: 'Día 5', date: '15 Jun', matchIds: [37, 38, 43, 44] },
+  };
+
+  const officialMatchIds = Object.values(matchDayMap).flatMap((d) => d.matchIds);
+  const dayKeys = Object.keys(matchDayMap);
 
   // Filtrar partidos completados
   const completedMatches = matches.filter(
@@ -81,6 +91,11 @@ export default function MyPredictions({
   // Clasificar en oficiales y de usuario
   const officialMatches = completedMatches.filter((m) => officialMatchIds.includes(m.id));
   const userPredictions = completedMatches.filter((m) => !officialMatchIds.includes(m.id));
+
+  // Filtrar oficiales por día seleccionado
+  const filteredOfficialMatches = selectedDay === 'ALL'
+    ? officialMatches
+    : officialMatches.filter((m) => matchDayMap[selectedDay]?.matchIds.includes(m.id));
 
   // Filtrar partidos de grupos
   const groupMatches = matches.filter((m) => m.stage === 'group');
@@ -325,45 +340,100 @@ export default function MyPredictions({
 
             {/* Resultados Reales / Oficiales */}
             <div className="glass-panel rounded-2xl p-5 shadow-2xl space-y-4">
-              <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                <h3 className="font-extrabold text-sm uppercase tracking-wider text-brandGold flex items-center gap-2">
-                  <Trophy className="w-4 h-4" />
-                  Resultados Oficiales de Jornada 1 ({officialMatches.length})
-                </h3>
-                <span className="text-3xs font-mono text-brandGold/75">Datos reales de la FIFA</span>
+              <div className="flex flex-col gap-3 border-b border-white/5 pb-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-extrabold text-sm uppercase tracking-wider text-brandGold flex items-center gap-2">
+                    <Trophy className="w-4 h-4" />
+                    Resultados Oficiales ({officialMatches.length})
+                  </h3>
+                  <span className="text-3xs font-mono text-brandGold/75">Datos reales de la FIFA</span>
+                </div>
+
+                {/* Filtro por día */}
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => setSelectedDay('ALL')}
+                    className={`px-2.5 py-1 rounded-lg text-3xs font-bold transition-all duration-200 ${
+                      selectedDay === 'ALL'
+                        ? 'bg-brandGold text-black shadow-md shadow-brandGold/25'
+                        : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border border-white/5'
+                    }`}
+                  >
+                    Todos
+                  </button>
+                  {dayKeys.map((dk) => (
+                    <button
+                      key={dk}
+                      onClick={() => setSelectedDay(dk)}
+                      className={`px-2.5 py-1 rounded-lg text-3xs font-bold transition-all duration-200 ${
+                        selectedDay === dk
+                          ? 'bg-brandGold text-black shadow-md shadow-brandGold/25'
+                          : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border border-white/5'
+                      }`}
+                    >
+                      {matchDayMap[dk].label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
+              {/* Fecha del día seleccionado */}
+              {selectedDay !== 'ALL' && matchDayMap[selectedDay] && (
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <Calendar className="w-3.5 h-3.5 text-brandGold/60" />
+                  <span className="font-mono">{matchDayMap[selectedDay].date} — {matchDayMap[selectedDay].label}</span>
+                  <span className="text-3xs text-gray-600">({filteredOfficialMatches.length} partidos)</span>
+                </div>
+              )}
+
               <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-                {officialMatches.map((m) => (
-                  <div
-                    key={m.id}
-                    className="bg-darkCard/30 border border-white/5 rounded-xl p-3.5 flex items-center justify-between gap-4 relative"
-                  >
-                    <div className="flex-1 flex items-center justify-between">
-                      <div className="flex-1 text-right pr-2">
-                        <span className="font-bold text-xs block text-gray-300 truncate">
-                          {getTeamName(m.team_a_id)}
-                        </span>
-                      </div>
+                {filteredOfficialMatches.length > 0 ? (
+                  filteredOfficialMatches.map((m) => {
+                    // Encontrar a qué día pertenece este partido
+                    const dayEntry = Object.entries(matchDayMap).find(([_, d]) => d.matchIds.includes(m.id));
+                    const dayLabel = dayEntry ? dayEntry[1].label : '';
 
-                      <div className="flex items-center gap-2 font-mono font-bold text-sm bg-brandGold/5 px-3 py-1.5 rounded-lg border border-brandGold/20 text-brandGold min-w-[70px] justify-center text-glow-gold">
-                        <span>{m.team_a_score}</span>
-                        <span className="text-gray-600 text-xs">-</span>
-                        <span>{m.team_b_score}</span>
-                      </div>
+                    return (
+                      <div
+                        key={m.id}
+                        className="bg-darkCard/30 border border-white/5 rounded-xl p-3.5 flex items-center justify-between gap-4 relative"
+                      >
+                        <div className="flex-1 flex items-center justify-between">
+                          <div className="flex-1 text-right pr-2">
+                            <span className="font-bold text-xs block text-gray-300 truncate">
+                              {getTeamName(m.team_a_id)}
+                            </span>
+                          </div>
 
-                      <div className="flex-1 text-left pl-2">
-                        <span className="font-bold text-xs block text-gray-300 truncate">
-                          {getTeamName(m.team_b_id)}
-                        </span>
-                      </div>
-                    </div>
+                          <div className="flex items-center gap-2 font-mono font-bold text-sm bg-brandGold/5 px-3 py-1.5 rounded-lg border border-brandGold/20 text-brandGold min-w-[70px] justify-center text-glow-gold">
+                            <span>{m.team_a_score}</span>
+                            <span className="text-gray-600 text-xs">-</span>
+                            <span>{m.team_b_score}</span>
+                          </div>
 
-                    <div className="flex items-center gap-1.5 border-l border-white/5 pl-3 font-mono text-3xs text-gray-500 uppercase">
-                      {getStageName(m.stage, m.group_letter)}
-                    </div>
+                          <div className="flex-1 text-left pl-2">
+                            <span className="font-bold text-xs block text-gray-300 truncate">
+                              {getTeamName(m.team_b_id)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 border-l border-white/5 pl-3">
+                          {selectedDay === 'ALL' && (
+                            <span className="text-3xs font-mono text-brandGold/50 hidden sm:inline">{dayLabel}</span>
+                          )}
+                          <span className="font-mono text-3xs text-gray-500 uppercase">
+                            {getStageName(m.stage, m.group_letter)}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="text-center py-8 text-gray-500 font-mono text-xs">
+                    No hay resultados oficiales para este día.
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>
