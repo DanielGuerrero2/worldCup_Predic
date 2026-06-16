@@ -143,11 +143,20 @@ export default function App() {
   };
 
   const handleResetAllUserPredictions = async () => {
-    if (!window.confirm('¿Estás seguro de que quieres borrar todas tus predicciones personalizadas? Los resultados oficiales de la Jornada 1 se mantendrán.')) {
+    if (!window.confirm('¿Estás seguro de que quieres borrar todas tus predicciones personalizadas? Los resultados oficiales de las Jornadas 1, 2 y 3 se mantendrán.')) {
       return;
     }
 
-    const officialMatchIds = [1, 2, 7, 19];
+    const officialMatchIds = [
+      1, 2,     // Día 1: Grupo A
+      7, 8,     // Día 2: Grupo B
+      13, 14,   // Día 2: Grupo C
+      19, 20,   // Día 3: Grupo D
+      25, 26,   // Día 4: Grupo E
+      31, 32,   // Día 4: Grupo F
+      37, 38,   // Día 5: Grupo G
+      43, 44,   // Día 5: Grupo H
+    ];
     const userPredictedMatches = matches.filter(
       (m) => m.status === 'completed' && !officialMatchIds.includes(m.id)
     );
