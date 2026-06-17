@@ -155,16 +155,16 @@ INSERT OR IGNORE INTO matches (id, team_a_id, team_b_id, stage, group_letter, te
 (48, 'KSA', 'CPV', 'group', 'H', NULL, NULL, 'scheduled'),
 
 -- Grupo I
-(49, 'FRA', 'SEN', 'group', 'I', NULL, NULL, 'scheduled'),
-(50, 'IRQ', 'NOR', 'group', 'I', NULL, NULL, 'scheduled'),
+(49, 'FRA', 'SEN', 'group', 'I', 3, 1, 'completed'),
+(50, 'IRQ', 'NOR', 'group', 'I', 1, 4, 'completed'),
 (51, 'FRA', 'IRQ', 'group', 'I', NULL, NULL, 'scheduled'),
 (52, 'SEN', 'NOR', 'group', 'I', NULL, NULL, 'scheduled'),
 (53, 'NOR', 'FRA', 'group', 'I', NULL, NULL, 'scheduled'),
 (54, 'SEN', 'IRQ', 'group', 'I', NULL, NULL, 'scheduled'),
 
 -- Grupo J
-(55, 'ARG', 'ALG', 'group', 'J', NULL, NULL, 'scheduled'),
-(56, 'AUT', 'JOR', 'group', 'J', NULL, NULL, 'scheduled'),
+(55, 'ARG', 'ALG', 'group', 'J', 3, 0, 'completed'),
+(56, 'AUT', 'JOR', 'group', 'J', 2, 1, 'completed'),
 (57, 'ARG', 'AUT', 'group', 'J', NULL, NULL, 'scheduled'),
 (58, 'ALG', 'JOR', 'group', 'J', NULL, NULL, 'scheduled'),
 (59, 'JOR', 'ARG', 'group', 'J', NULL, NULL, 'scheduled'),
